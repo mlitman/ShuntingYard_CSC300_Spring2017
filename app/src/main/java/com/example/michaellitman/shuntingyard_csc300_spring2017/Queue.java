@@ -17,6 +17,13 @@ public class Queue
         this.count = 0;
     }
 
+    public void removeAll()
+    {
+        this.front = null;
+        this.end = null;
+        this.count = 0;
+    }
+
     public int getCount() {
         return count;
     }

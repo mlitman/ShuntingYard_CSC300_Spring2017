@@ -3,6 +3,7 @@ package com.example.michaellitman.shuntingyard_csc300_spring2017;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -11,32 +12,27 @@ import java.util.StringTokenizer;
 public class MainActivity extends AppCompatActivity
 {
     private EditText inputET;
-    private TextView outputTV;
+    private ViewGroup inputQ;
+    private ViewGroup opStack;
+    private ViewGroup outputQ;
+    private ViewGroup solutionStack;
+    private ShuntingYard sy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         this.inputET = (EditText)this.findViewById(R.id.inputET);
-        this.outputTV = (TextView)this.findViewById(R.id.outputTV);
+        this.inputQ = (ViewGroup)this.findViewById(R.id.inputQ);
+        this.opStack = (ViewGroup)this.findViewById(R.id.opStack);
+        this.outputQ = (ViewGroup)this.findViewById(R.id.outputQ);
+        this.solutionStack = (ViewGroup)this.findViewById(R.id.solutionStack);
+        this.sy = new ShuntingYard(inputET, inputQ, opStack, outputQ, solutionStack, this);
     }
 
     public void processButtonPressed(View v)
     {
-        StringTokenizer st = new StringTokenizer(this.inputET.getText().toString(), "+-*/", true);
-        Queue q = new Queue();
-        while(st.hasMoreTokens())
-        {
-            q.enqueue(st.nextToken());
-        }
-
-        String answer = "";
-        while(q.getCount() > 0)
-        {
-            answer = answer + q.dequeue().getPayload() + ",";
-        }
-        this.outputTV.setText(answer);
+        sy.processExpression();
     }
 }
