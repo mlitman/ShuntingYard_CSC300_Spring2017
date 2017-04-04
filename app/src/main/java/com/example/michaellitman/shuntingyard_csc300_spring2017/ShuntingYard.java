@@ -25,6 +25,7 @@ public class ShuntingYard
     private ViewGroup outputQView;
     private ViewGroup solutionStackView;
     private AppCompatActivity context;
+    private String spacer = " | ";
 
     public ShuntingYard(EditText inputET, ViewGroup inputQView, ViewGroup opStackView, ViewGroup outputQView, ViewGroup solutionStackView, AppCompatActivity context)
     {
@@ -53,18 +54,89 @@ public class ShuntingYard
         TextView tv;
         while(st.hasMoreTokens())
         {
-            text = st.nextToken();
+            text = st.nextToken().trim();
             this.inputQ.enqueue(text);
             tv = new TextView(this.context);
-            tv.setText(text);
+            tv.setText(text + spacer);
             this.inputQView.addView(tv);
         }
+    }
+
+    public boolean processOutputQ()
+    {
+        if(this.outputQ.getCount() != 0)
+        {
+            String temp = this.outputQ.dequeue().getPayload();
+            View tempView = this.outputQView.getChildAt(0);
+            this.outputQView.removeViewAt(0);
+            if("+-*/".indexOf(temp) == -1)
+            {
+                //we are looking at a number
+                this.solutionStack.push(temp);
+                this.solutionStackView.addView(tempView, 0);
+                return true;
+            }
+            else
+            {
+                //we are looking at an op, time to do MATH!!!
+                int num2 = Integer.parseInt(this.solutionStack.pop());
+                int num1 = Integer.parseInt(this.solutionStack.pop());
+                this.solutionStackView.removeViewAt(0);
+                this.solutionStackView.removeViewAt(0);
+
+                if(temp.equals("+"))
+                {
+                    TextView tv = new TextView(this.context);
+                    String answer = "" + (num1 + num2);
+                    tv.setText(answer + spacer);
+                    this.solutionStack.push(answer);
+                    this.solutionStackView.addView(tv, 0);
+                    return true;
+                }
+                else if (temp.equals("-"))
+                {
+                    TextView tv = new TextView(this.context);
+                    String answer = "" + (num1 - num2);
+                    tv.setText(answer + spacer);
+                    this.solutionStack.push(answer);
+                    this.solutionStackView.addView(tv, 0);
+                    return true;
+                }
+                else if (temp.equals("*"))
+                {
+                    TextView tv = new TextView(this.context);
+                    String answer = "" + (num1 * num2);
+                    tv.setText(answer + spacer);
+                    this.solutionStack.push(answer);
+                    this.solutionStackView.addView(tv, 0);
+                    return true;
+                }
+                else if (temp.equals("/"))
+                {
+                    TextView tv = new TextView(this.context);
+                    String answer = "" + (num1 / num2);
+                    tv.setText(answer + spacer);
+                    this.solutionStack.push(answer);
+                    this.solutionStackView.addView(tv, 0);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean processInputQ()
     {
         if(this.inputQ.getCount() == 0)
         {
+            if(!this.opStack.isEmpty())
+            {
+                this.outputQ.enqueue(this.opStack.pop());
+                View tempView = this.opStackView.getChildAt(0);
+                this.opStackView.removeViewAt(0);
+                this.outputQView.addView(tempView);
+                return true;
+            }
             return false;
         }
         else
@@ -74,6 +146,9 @@ public class ShuntingYard
             {
                 //we have a non-operator (ie a number)
                 this.outputQ.enqueue(temp);
+                View tempView = this.inputQView.getChildAt(0);
+                this.inputQView.removeViewAt(0);
+                this.outputQView.addView(tempView);
             }
             else
             {
@@ -81,16 +156,25 @@ public class ShuntingYard
                 if(this.opStack.isEmpty())
                 {
                     this.opStack.push(temp);
+                    View tempView = this.inputQView.getChildAt(0);
+                    this.inputQView.removeViewAt(0);
+                    this.opStackView.addView(tempView, 0);
                 }
                 else
                 {
                     int valForOp = this.valueForOp(temp);
-                    while(this.opStack.isEmpty() == false && this.valueForOp(this.opStack.peek()) <= valForOp)
+                    while(this.opStack.isEmpty() == false && this.valueForOp(this.opStack.peek()) >= valForOp)
                     {
                         this.outputQ.enqueue(this.opStack.pop());
+                        View tempView = this.opStackView.getChildAt(0);
+                        this.opStackView.removeViewAt(0);
+                        this.outputQView.addView(tempView);
                     }
                     //we know that the opStack is ready to receive temp
                     this.opStack.push(temp);
+                    View tempView = this.inputQView.getChildAt(0);
+                    this.inputQView.removeViewAt(0);
+                    this.opStackView.addView(tempView, 0);
                 }
             }
             return true;

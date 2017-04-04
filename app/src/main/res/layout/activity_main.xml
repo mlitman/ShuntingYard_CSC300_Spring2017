@@ -28,11 +28,25 @@
             android:hint="enter expression" />
 
         <Button
-            android:text="Parse Expression"
+            android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button"
-            android:onClick="processButtonPressed" />
+            android:onClick="processButtonPressed"
+            android:text="Parse Expression" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="stepInputQButtonPressed"
+            android:text="Step InputQ" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="stepOutputQButtonPressed"
+            android:text="Step OutputQ" />
 
         <TextView
             android:id="@+id/textView2"

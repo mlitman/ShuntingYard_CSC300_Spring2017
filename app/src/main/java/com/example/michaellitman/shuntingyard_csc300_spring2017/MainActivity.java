@@ -31,6 +31,16 @@ public class MainActivity extends AppCompatActivity
         this.sy = new ShuntingYard(inputET, inputQ, opStack, outputQ, solutionStack, this);
     }
 
+    public void stepInputQButtonPressed(View v)
+    {
+        sy.processInputQ();
+    }
+
+    public void stepOutputQButtonPressed(View v)
+    {
+        sy.processOutputQ();
+    }
+
     public void processButtonPressed(View v)
     {
         sy.processExpression();
